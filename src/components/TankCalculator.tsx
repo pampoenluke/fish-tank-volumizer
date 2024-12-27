@@ -9,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calculator } from 'lucide-react';
 import RectangularTank from './tank-shapes/RectangularTank';
 import CylindricalTank from './tank-shapes/CylindricalTank';
 import BowfrontTank from './tank-shapes/BowfrontTank';
@@ -49,10 +48,7 @@ const TankCalculator = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-aqua-50 to-white p-4">
       <Card className="max-w-2xl mx-auto p-6 shadow-lg">
-        <div className="flex items-center gap-2 mb-6">
-          <Calculator className="w-6 h-6 text-aqua-500" />
-          <h1 className="text-2xl font-semibold text-gray-800">Aquarium Volume Calculator</h1>
-        </div>
+        <h1 className="text-2xl font-semibold text-gray-800 mb-6">Aquarium Volume Calculator</h1>
 
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -168,7 +164,12 @@ const TankCalculator = () => {
             </div>
           </div>
 
-          <VolumeDisplay gallons={volume.gallons} liters={volume.liters} />
+          <VolumeDisplay 
+            gallons={volume.gallons} 
+            liters={volume.liters} 
+            dimensions={dimensions}
+            unit={unit}
+          />
           <PrintButton />
         </div>
       </Card>

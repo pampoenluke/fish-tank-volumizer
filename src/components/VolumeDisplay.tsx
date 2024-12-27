@@ -7,20 +7,47 @@ import { useToast } from '@/components/ui/use-toast';
 interface VolumeDisplayProps {
   gallons: string | number;
   liters: string | number;
+  dimensions: {
+    length?: string;
+    width?: string;
+    height?: string;
+    diameter?: string;
+    bowDepth?: string;
+    cornerAngle?: string;
+    lshapeLongSide?: string;
+    lshapeShortSide?: string;
+    glassThickness: string;
+  };
+  unit: string;
 }
 
-const VolumeDisplay = ({ gallons, liters }: VolumeDisplayProps) => {
+const VolumeDisplay = ({ gallons, liters, dimensions, unit }: VolumeDisplayProps) => {
   const { toast } = useToast();
 
   const handleCopy = () => {
-    const text = `Tank Volume:
+    let dimensionsText = '';
+    
+    // Add dimensions based on what's available
+    if (dimensions.length) dimensionsText += `Length: ${dimensions.length} ${unit}\n`;
+    if (dimensions.width) dimensionsText += `Width: ${dimensions.width} ${unit}\n`;
+    if (dimensions.height) dimensionsText += `Height: ${dimensions.height} ${unit}\n`;
+    if (dimensions.diameter) dimensionsText += `Diameter: ${dimensions.diameter} ${unit}\n`;
+    if (dimensions.bowDepth) dimensionsText += `Bow Depth: ${dimensions.bowDepth} ${unit}\n`;
+    if (dimensions.cornerAngle) dimensionsText += `Corner Angle: ${dimensions.cornerAngle}°\n`;
+    if (dimensions.lshapeLongSide) dimensionsText += `L-Shape Long Side: ${dimensions.lshapeLongSide} ${unit}\n`;
+    if (dimensions.lshapeShortSide) dimensionsText += `L-Shape Short Side: ${dimensions.lshapeShortSide} ${unit}\n`;
+    dimensionsText += `Glass Thickness: ${dimensions.glassThickness} ${unit}\n`;
+
+    const text = `Tank Dimensions:
+${dimensionsText}
+Tank Volume:
 Gallons: ${gallons}
 Liters: ${liters}`;
 
     navigator.clipboard.writeText(text).then(() => {
       toast({
         title: "Copied!",
-        description: "Tank volume has been copied to clipboard",
+        description: "Tank dimensions and volume have been copied to clipboard",
         duration: 2000,
       });
     }).catch(() => {
