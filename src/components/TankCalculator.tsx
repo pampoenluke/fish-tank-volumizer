@@ -46,6 +46,8 @@ const TankCalculator = () => {
     switch (selectedShape) {
       case "rectangular":
         return <RectangularTank {...props} />;
+      case "square":
+        return <RectangularTank {...props} isSquare={true} />;
       case "cylindrical":
         return <CylindricalTank {...props} />;
       case "bowfront":
@@ -92,6 +94,7 @@ const TankCalculator = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="rectangular">Rectangular</SelectItem>
+              <SelectItem value="square">Square</SelectItem>
               <SelectItem value="cylindrical">Cylindrical</SelectItem>
               <SelectItem value="bowfront">Bowfront</SelectItem>
               <SelectItem value="corner">Corner</SelectItem>
