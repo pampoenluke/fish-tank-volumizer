@@ -5,49 +5,25 @@ import { Copy } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
 interface VolumeDisplayProps {
-  gallons: string | number;
-  liters: string | number;
-  dimensions: {
-    length?: string;
-    width?: string;
-    height?: string;
-    diameter?: string;
-    bowDepth?: string;
-    cornerAngle?: string;
-    lshapeLongSide?: string;
-    lshapeShortSide?: string;
-    glassThickness: string;
-  };
-  unit: string;
+  volume: number;
+  unit: "gallons" | "liters";
+  onUnitChange: (newUnit: "gallons" | "liters") => void;
 }
 
-const VolumeDisplay = ({ gallons, liters, dimensions, unit }: VolumeDisplayProps) => {
+const VolumeDisplay = ({ volume, unit, onUnitChange }: VolumeDisplayProps) => {
   const { toast } = useToast();
+  const gallons = unit === 'gallons' ? volume : volume * 0.264172;
+  const liters = unit === 'liters' ? volume : volume * 3.78541;
 
   const handleCopy = () => {
-    let dimensionsText = '';
-    
-    // Add dimensions based on what's available
-    if (dimensions.length) dimensionsText += `Length: ${dimensions.length} ${unit}\n`;
-    if (dimensions.width) dimensionsText += `Width: ${dimensions.width} ${unit}\n`;
-    if (dimensions.height) dimensionsText += `Height: ${dimensions.height} ${unit}\n`;
-    if (dimensions.diameter) dimensionsText += `Diameter: ${dimensions.diameter} ${unit}\n`;
-    if (dimensions.bowDepth) dimensionsText += `Bow Depth: ${dimensions.bowDepth} ${unit}\n`;
-    if (dimensions.cornerAngle) dimensionsText += `Corner Angle: ${dimensions.cornerAngle}°\n`;
-    if (dimensions.lshapeLongSide) dimensionsText += `L-Shape Long Side: ${dimensions.lshapeLongSide} ${unit}\n`;
-    if (dimensions.lshapeShortSide) dimensionsText += `L-Shape Short Side: ${dimensions.lshapeShortSide} ${unit}\n`;
-    dimensionsText += `Glass Thickness: ${dimensions.glassThickness} ${unit}\n`;
-
-    const text = `Tank Dimensions:
-${dimensionsText}
-Tank Volume:
-Gallons: ${gallons}
-Liters: ${liters}`;
+    const text = `Tank Volume:
+Gallons: ${gallons.toFixed(2)}
+Liters: ${liters.toFixed(2)}`;
 
     navigator.clipboard.writeText(text).then(() => {
       toast({
         title: "Copied!",
-        description: "Tank dimensions and volume have been copied to clipboard",
+        description: "Tank volume has been copied to clipboard",
         duration: 2000,
       });
     }).catch(() => {
@@ -77,11 +53,11 @@ Liters: ${liters}`;
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <p className="text-sm text-gray-600">Gallons</p>
-          <p className="text-2xl font-bold text-aqua-500">{gallons}</p>
+          <p className="text-2xl font-bold text-aqua-500">{gallons.toFixed(2)}</p>
         </div>
         <div>
           <p className="text-sm text-gray-600">Liters</p>
-          <p className="text-2xl font-bold text-aqua-500">{liters}</p>
+          <p className="text-2xl font-bold text-aqua-500">{liters.toFixed(2)}</p>
         </div>
       </div>
     </div>
