@@ -1,178 +1,91 @@
-import React, { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import RectangularTank from './tank-shapes/RectangularTank';
-import CylindricalTank from './tank-shapes/CylindricalTank';
-import BowfrontTank from './tank-shapes/BowfrontTank';
-import HexagonalTank from './tank-shapes/HexagonalTank';
-import CornerTank from './tank-shapes/CornerTank';
-import LShapeTank from './tank-shapes/LShapeTank';
-import PentagonTank from './tank-shapes/PentagonTank';
-import OctagonTank from './tank-shapes/OctagonTank';
-import PrintButton from './PrintButton';
-import VolumeDisplay from './VolumeDisplay';
-import { calculateVolume } from '@/utils/volumeCalculations';
-
-type TankShape = 'rectangular' | 'square' | 'cylindrical' | 'circle' | 'bowfront' | 'hexagonal' | 'corner' | 'lshape' | 'pentagon' | 'octagon';
-type Unit = 'inches' | 'mm';
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import RectangularTank from "./tank-shapes/RectangularTank";
+import CylindricalTank from "./tank-shapes/CylindricalTank";
+import BowfrontTank from "./tank-shapes/BowfrontTank";
+import CornerTank from "./tank-shapes/CornerTank";
+import LShapeTank from "./tank-shapes/LShapeTank";
+import HexagonalTank from "./tank-shapes/HexagonalTank";
+import PentagonTank from "./tank-shapes/PentagonTank";
+import OctagonTank from "./tank-shapes/OctagonTank";
+import VolumeDisplay from "./VolumeDisplay";
+import PrintButton from "./PrintButton";
 
 const TankCalculator = () => {
-  const [shape, setShape] = useState<TankShape>('rectangular');
-  const [unit, setUnit] = useState<Unit>('inches');
-  const [dimensions, setDimensions] = useState({
-    length: '',
-    width: '',
-    height: '',
-    diameter: '',
-    bowDepth: '',
-    cornerAngle: '45',
-    lshapeLongSide: '',
-    lshapeShortSide: '',
-    glassThickness: '0.5',
-  });
+  const [volume, setVolume] = useState(0);
+  const [unit, setUnit] = useState<"gallons" | "liters">("gallons");
 
-  const handleDimensionChange = (dimension: string, value: string) => {
-    setDimensions({ ...dimensions, [dimension]: value });
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume);
   };
 
-  const volume = calculateVolume(shape, dimensions, unit, dimensions.glassThickness);
+  const handleUnitChange = (newUnit: "gallons" | "liters") => {
+    setUnit(newUnit);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-aqua-50 to-white p-4">
-      <Card className="max-w-2xl mx-auto p-6 shadow-lg">
-        <h1 className="text-2xl font-semibold text-gray-800 mb-6">Aquarium Volume Calculator</h1>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col items-center mb-8">
+        <img 
+          src="/fish-tank-logo.png" 
+          alt="calculate fish tank volume" 
+          className="w-24 h-24 mb-4"
+        />
+        <h1 className="text-3xl font-bold text-center mb-6">
+          Calculate Fish Tank Volume
+        </h1>
+      </div>
+      
+      <Card className="w-full max-w-4xl mx-auto">
+        <Tabs defaultValue="rectangular" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
+            <TabsTrigger value="rectangular">Rectangular</TabsTrigger>
+            <TabsTrigger value="cylindrical">Cylindrical</TabsTrigger>
+            <TabsTrigger value="bowfront">Bowfront</TabsTrigger>
+            <TabsTrigger value="corner">Corner</TabsTrigger>
+            <TabsTrigger value="l-shape">L-Shape</TabsTrigger>
+            <TabsTrigger value="hexagonal">Hexagonal</TabsTrigger>
+            <TabsTrigger value="pentagon">Pentagon</TabsTrigger>
+            <TabsTrigger value="octagon">Octagon</TabsTrigger>
+          </TabsList>
 
-        <div className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label>Tank Shape</Label>
-              <Select value={shape} onValueChange={(value: TankShape) => setShape(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="rectangular">Rectangular</SelectItem>
-                  <SelectItem value="square">Square</SelectItem>
-                  <SelectItem value="cylindrical">Cylindrical</SelectItem>
-                  <SelectItem value="circle">Circle</SelectItem>
-                  <SelectItem value="bowfront">Bow Front</SelectItem>
-                  <SelectItem value="hexagonal">Hexagonal</SelectItem>
-                  <SelectItem value="corner">Corner</SelectItem>
-                  <SelectItem value="lshape">L-Shape</SelectItem>
-                  <SelectItem value="pentagon">Pentagon</SelectItem>
-                  <SelectItem value="octagon">Octagon</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <VolumeDisplay volume={volume} unit={unit} onUnitChange={handleUnitChange} />
 
-            <div>
-              <Label>Unit of Measurement</Label>
-              <Select value={unit} onValueChange={(value: Unit) => setUnit(value)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="inches">Inches</SelectItem>
-                  <SelectItem value="mm">Millimeters</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <TabsContent value="rectangular">
+            <RectangularTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {(shape === 'rectangular' || shape === 'square') && (
-              <RectangularTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
+          <TabsContent value="cylindrical">
+            <CylindricalTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-            {(shape === 'cylindrical' || shape === 'circle') && (
-              <CylindricalTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
+          <TabsContent value="bowfront">
+            <BowfrontTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-            {shape === 'bowfront' && (
-              <BowfrontTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
+          <TabsContent value="corner">
+            <CornerTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-            {shape === 'hexagonal' && (
-              <HexagonalTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
+          <TabsContent value="l-shape">
+            <LShapeTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-            {shape === 'corner' && (
-              <CornerTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
+          <TabsContent value="hexagonal">
+            <HexagonalTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-            {shape === 'lshape' && (
-              <LShapeTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
+          <TabsContent value="pentagon">
+            <PentagonTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
 
-            {shape === 'pentagon' && (
-              <PentagonTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
-
-            {shape === 'octagon' && (
-              <OctagonTank
-                dimensions={dimensions}
-                unit={unit}
-                onDimensionChange={handleDimensionChange}
-              />
-            )}
-
-            <div>
-              <Label>Glass Thickness ({unit})</Label>
-              <Input
-                type="number"
-                value={dimensions.glassThickness}
-                onChange={(e) => handleDimensionChange('glassThickness', e.target.value)}
-                placeholder={`Enter glass thickness in ${unit}`}
-                step={unit === 'mm' ? '1' : '0.125'}
-              />
-            </div>
-          </div>
-
-          <VolumeDisplay 
-            gallons={volume.gallons} 
-            liters={volume.liters} 
-            dimensions={dimensions}
-            unit={unit}
-          />
-          <PrintButton />
-        </div>
+          <TabsContent value="octagon">
+            <OctagonTank onVolumeChange={handleVolumeChange} unit={unit} />
+          </TabsContent>
+        </Tabs>
       </Card>
+      <PrintButton />
     </div>
   );
 };
