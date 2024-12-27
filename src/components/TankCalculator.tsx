@@ -15,6 +15,7 @@ import PrintButton from "./PrintButton";
 const TankCalculator = () => {
   const [volume, setVolume] = useState(0);
   const [unit, setUnit] = useState<"gallons" | "liters">("gallons");
+  const [dimensionUnit, setDimensionUnit] = useState<"inches" | "mm">("inches");
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
@@ -22,6 +23,10 @@ const TankCalculator = () => {
 
   const handleUnitChange = (newUnit: "gallons" | "liters") => {
     setUnit(newUnit);
+  };
+
+  const handleDimensionUnitChange = (newUnit: "inches" | "mm") => {
+    setDimensionUnit(newUnit);
   };
 
   return (
@@ -50,38 +55,44 @@ const TankCalculator = () => {
             <TabsTrigger value="octagon">Octagon</TabsTrigger>
           </TabsList>
 
-          <VolumeDisplay volume={volume} unit={unit} onUnitChange={handleUnitChange} />
+          <VolumeDisplay 
+            volume={volume} 
+            unit={unit} 
+            dimensionUnit={dimensionUnit}
+            onUnitChange={handleUnitChange}
+            onDimensionUnitChange={handleDimensionUnitChange}
+          />
 
           <TabsContent value="rectangular">
-            <RectangularTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <RectangularTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="cylindrical">
-            <CylindricalTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <CylindricalTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="bowfront">
-            <BowfrontTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <BowfrontTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="corner">
-            <CornerTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <CornerTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="l-shape">
-            <LShapeTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <LShapeTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="hexagonal">
-            <HexagonalTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <HexagonalTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="pentagon">
-            <PentagonTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <PentagonTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
 
           <TabsContent value="octagon">
-            <OctagonTank onVolumeChange={handleVolumeChange} unit={unit} />
+            <OctagonTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
           </TabsContent>
         </Tabs>
       </Card>
