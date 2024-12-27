@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 interface LShapeTankProps {
   onVolumeChange: (volume: number) => void;
   unit: "gallons" | "liters";
+  dimensionUnit: "inches" | "mm";
 }
 
 const LShapeTank: React.FC<LShapeTankProps> = ({
   onVolumeChange,
-  unit
+  unit,
+  dimensionUnit
 }) => {
   const [dimensions, setDimensions] = useState({
     lshapeLongSide: '',
@@ -23,7 +25,12 @@ const LShapeTank: React.FC<LShapeTankProps> = ({
     const height = parseFloat(dimensions.height);
 
     if (longSide && shortSide && height) {
-      const volume = (longSide * shortSide * height);
+      let volume = (longSide * shortSide * height);
+      
+      // Convert from mm³ to in³ if needed
+      if (dimensionUnit === 'mm') {
+        volume = volume / 16387.064;
+      }
       
       const volumeInSelectedUnit = unit === 'gallons' 
         ? volume * 0.004329 // Convert cubic inches to gallons
@@ -31,35 +38,35 @@ const LShapeTank: React.FC<LShapeTankProps> = ({
       
       onVolumeChange(volumeInSelectedUnit);
     }
-  }, [dimensions, unit, onVolumeChange]);
+  }, [dimensions, unit, dimensionUnit, onVolumeChange]);
 
   return (
     <div className="grid gap-4 p-4">
       <div>
-        <Label>Long Side ({unit})</Label>
+        <Label>Long Side ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.lshapeLongSide}
           onChange={(e) => setDimensions(prev => ({ ...prev, lshapeLongSide: e.target.value }))}
-          placeholder={`Enter long side in ${unit}`}
+          placeholder={`Enter long side in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Short Side ({unit})</Label>
+        <Label>Short Side ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.lshapeShortSide}
           onChange={(e) => setDimensions(prev => ({ ...prev, lshapeShortSide: e.target.value }))}
-          placeholder={`Enter short side in ${unit}`}
+          placeholder={`Enter short side in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Height ({unit})</Label>
+        <Label>Height ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
-          placeholder={`Enter height in ${unit}`}
+          placeholder={`Enter height in ${dimensionUnit}`}
         />
       </div>
     </div>

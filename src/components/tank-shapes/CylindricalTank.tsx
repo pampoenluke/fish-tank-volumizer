@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 interface CylindricalTankProps {
   onVolumeChange: (volume: number) => void;
   unit: "gallons" | "liters";
+  dimensionUnit: "inches" | "mm";
 }
 
 const CylindricalTank: React.FC<CylindricalTankProps> = ({
   onVolumeChange,
-  unit
+  unit,
+  dimensionUnit
 }) => {
   const [dimensions, setDimensions] = useState({
     diameter: '',
@@ -21,33 +23,39 @@ const CylindricalTank: React.FC<CylindricalTankProps> = ({
     const height = parseFloat(dimensions.height);
 
     if (diameter && height) {
-      const radius = diameter / 2;
-      const volume = Math.PI * radius * radius * height;
+      let volume = Math.PI * Math.pow(diameter / 2, 2) * height;
+      
+      // Convert from mm³ to in³ if needed
+      if (dimensionUnit === 'mm') {
+        volume = volume / 16387.064;
+      }
+      
       const volumeInSelectedUnit = unit === 'gallons' 
         ? volume * 0.004329 // Convert cubic inches to gallons
         : volume * 0.016387; // Convert cubic inches to liters
+      
       onVolumeChange(volumeInSelectedUnit);
     }
-  }, [dimensions, unit, onVolumeChange]);
+  }, [dimensions, unit, dimensionUnit, onVolumeChange]);
 
   return (
     <div className="grid gap-4 p-4">
       <div>
-        <Label>Diameter ({unit})</Label>
+        <Label>Diameter ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.diameter}
           onChange={(e) => setDimensions(prev => ({ ...prev, diameter: e.target.value }))}
-          placeholder={`Enter diameter in ${unit}`}
+          placeholder={`Enter diameter in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Height ({unit})</Label>
+        <Label>Height ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
-          placeholder={`Enter height in ${unit}`}
+          placeholder={`Enter height in ${dimensionUnit}`}
         />
       </div>
     </div>

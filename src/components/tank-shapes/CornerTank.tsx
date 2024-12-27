@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 interface CornerTankProps {
   onVolumeChange: (volume: number) => void;
   unit: "gallons" | "liters";
+  dimensionUnit: "inches" | "mm";
 }
 
 const CornerTank: React.FC<CornerTankProps> = ({
   onVolumeChange,
-  unit
+  unit,
+  dimensionUnit
 }) => {
   const [dimensions, setDimensions] = useState({
     width: '',
@@ -24,7 +26,12 @@ const CornerTank: React.FC<CornerTankProps> = ({
 
     if (width && height && cornerAngle) {
       const radians = (cornerAngle * Math.PI) / 180;
-      const volume = (width * width * height) / (2 * Math.tan(radians / 2));
+      let volume = (width * width * height) / (2 * Math.tan(radians / 2));
+      
+      // Convert from mm³ to in³ if needed
+      if (dimensionUnit === 'mm') {
+        volume = volume / 16387.064;
+      }
       
       const volumeInSelectedUnit = unit === 'gallons' 
         ? volume * 0.004329 // Convert cubic inches to gallons
@@ -32,26 +39,26 @@ const CornerTank: React.FC<CornerTankProps> = ({
       
       onVolumeChange(volumeInSelectedUnit);
     }
-  }, [dimensions, unit, onVolumeChange]);
+  }, [dimensions, unit, dimensionUnit, onVolumeChange]);
 
   return (
     <div className="grid gap-4 p-4">
       <div>
-        <Label>Side Length ({unit})</Label>
+        <Label>Side Length ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.width}
           onChange={(e) => setDimensions(prev => ({ ...prev, width: e.target.value }))}
-          placeholder={`Enter side length in ${unit}`}
+          placeholder={`Enter side length in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Height ({unit})</Label>
+        <Label>Height ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
-          placeholder={`Enter height in ${unit}`}
+          placeholder={`Enter height in ${dimensionUnit}`}
         />
       </div>
       <div>

@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 interface BowfrontTankProps {
   onVolumeChange: (volume: number) => void;
   unit: "gallons" | "liters";
+  dimensionUnit: "inches" | "mm";
 }
 
 const BowfrontTank: React.FC<BowfrontTankProps> = ({
   onVolumeChange,
-  unit
+  unit,
+  dimensionUnit
 }) => {
   const [dimensions, setDimensions] = useState({
     length: '',
@@ -25,11 +27,14 @@ const BowfrontTank: React.FC<BowfrontTankProps> = ({
     const bowDepth = parseFloat(dimensions.bowDepth);
 
     if (length && width && height && bowDepth) {
-      // Calculate base volume (rectangular part)
-      const baseVolume = length * width * height;
-      // Add bow front volume (approximation using partial cylinder)
-      const bowVolume = (Math.PI * bowDepth * width * height) / 4;
-      const totalVolume = baseVolume + bowVolume;
+      let baseVolume = length * width * height;
+      let bowVolume = (Math.PI * bowDepth * width * height) / 4;
+      let totalVolume = baseVolume + bowVolume;
+      
+      // Convert from mm³ to in³ if needed
+      if (dimensionUnit === 'mm') {
+        totalVolume = totalVolume / 16387.064;
+      }
       
       const volumeInSelectedUnit = unit === 'gallons' 
         ? totalVolume * 0.004329 // Convert cubic inches to gallons
@@ -37,44 +42,44 @@ const BowfrontTank: React.FC<BowfrontTankProps> = ({
       
       onVolumeChange(volumeInSelectedUnit);
     }
-  }, [dimensions, unit, onVolumeChange]);
+  }, [dimensions, unit, dimensionUnit, onVolumeChange]);
 
   return (
     <div className="grid gap-4 p-4">
       <div>
-        <Label>Length ({unit})</Label>
+        <Label>Length ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.length}
           onChange={(e) => setDimensions(prev => ({ ...prev, length: e.target.value }))}
-          placeholder={`Enter length in ${unit}`}
+          placeholder={`Enter length in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Width ({unit})</Label>
+        <Label>Width ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.width}
           onChange={(e) => setDimensions(prev => ({ ...prev, width: e.target.value }))}
-          placeholder={`Enter width in ${unit}`}
+          placeholder={`Enter width in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Height ({unit})</Label>
+        <Label>Height ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
-          placeholder={`Enter height in ${unit}`}
+          placeholder={`Enter height in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Bow Depth ({unit})</Label>
+        <Label>Bow Depth ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.bowDepth}
           onChange={(e) => setDimensions(prev => ({ ...prev, bowDepth: e.target.value }))}
-          placeholder={`Enter bow depth in ${unit}`}
+          placeholder={`Enter bow depth in ${dimensionUnit}`}
         />
       </div>
     </div>

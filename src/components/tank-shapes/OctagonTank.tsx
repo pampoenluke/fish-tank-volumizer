@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 interface OctagonTankProps {
   onVolumeChange: (volume: number) => void;
   unit: "gallons" | "liters";
+  dimensionUnit: "inches" | "mm";
 }
 
 const OctagonTank: React.FC<OctagonTankProps> = ({
   onVolumeChange,
-  unit
+  unit,
+  dimensionUnit
 }) => {
   const [dimensions, setDimensions] = useState({
     width: '',
@@ -21,9 +23,13 @@ const OctagonTank: React.FC<OctagonTankProps> = ({
     const height = parseFloat(dimensions.height);
 
     if (width && height) {
-      // Regular octagon volume calculation
       const octagonArea = 2 * Math.pow(width, 2) * (1 + Math.sqrt(2));
-      const volume = octagonArea * height;
+      let volume = octagonArea * height;
+      
+      // Convert from mm³ to in³ if needed
+      if (dimensionUnit === 'mm') {
+        volume = volume / 16387.064;
+      }
       
       const volumeInSelectedUnit = unit === 'gallons' 
         ? volume * 0.004329 // Convert cubic inches to gallons
@@ -31,26 +37,26 @@ const OctagonTank: React.FC<OctagonTankProps> = ({
       
       onVolumeChange(volumeInSelectedUnit);
     }
-  }, [dimensions, unit, onVolumeChange]);
+  }, [dimensions, unit, dimensionUnit, onVolumeChange]);
 
   return (
     <div className="grid gap-4 p-4">
       <div>
-        <Label>Side Length ({unit})</Label>
+        <Label>Side Length ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.width}
           onChange={(e) => setDimensions(prev => ({ ...prev, width: e.target.value }))}
-          placeholder={`Enter side length in ${unit}`}
+          placeholder={`Enter side length in ${dimensionUnit}`}
         />
       </div>
       <div>
-        <Label>Height ({unit})</Label>
+        <Label>Height ({dimensionUnit})</Label>
         <Input
           type="number"
           value={dimensions.height}
           onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
-          placeholder={`Enter height in ${unit}`}
+          placeholder={`Enter height in ${dimensionUnit}`}
         />
       </div>
     </div>
