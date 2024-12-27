@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calculator, Square, Circle, Hexagon, Rectangle } from 'lucide-react';
+import { Calculator, Square, Circle, Hexagon } from 'lucide-react';
 import RectangularTank from './tank-shapes/RectangularTank';
 import CylindricalTank from './tank-shapes/CylindricalTank';
 import BowfrontTank from './tank-shapes/BowfrontTank';
@@ -53,7 +53,7 @@ const TankCalculator = () => {
         return <Hexagon className="w-5 h-5" />;
       case 'rectangular':
       default:
-        return <Rectangle className="w-5 h-5" />;
+        return <Square className="w-5 h-5 rotate-90" />;
     }
   };
 
@@ -81,7 +81,7 @@ const TankCalculator = () => {
                 <SelectContent>
                   <SelectItem value="rectangular">
                     <div className="flex items-center gap-2">
-                      <Rectangle className="w-5 h-5" />
+                      <Square className="w-5 h-5 rotate-90" />
                       Rectangular
                     </div>
                   </SelectItem>
@@ -105,7 +105,7 @@ const TankCalculator = () => {
                   </SelectItem>
                   <SelectItem value="bowfront">
                     <div className="flex items-center gap-2">
-                      <Rectangle className="w-5 h-5" />
+                      <Square className="w-5 h-5 rotate-90" />
                       Bow Front
                     </div>
                   </SelectItem>
@@ -117,13 +117,13 @@ const TankCalculator = () => {
                   </SelectItem>
                   <SelectItem value="corner">
                     <div className="flex items-center gap-2">
-                      <Rectangle className="w-5 h-5 rotate-45" />
+                      <Square className="w-5 h-5 rotate-45" />
                       Corner
                     </div>
                   </SelectItem>
                   <SelectItem value="lshape">
                     <div className="flex items-center gap-2">
-                      <Rectangle className="w-5 h-5" />
+                      <Square className="w-5 h-5 rotate-90" />
                       L-Shape
                     </div>
                   </SelectItem>
