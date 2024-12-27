@@ -77,7 +77,7 @@ const TankCalculator = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col items-center mb-8">
         <img 
-          src="/fish-tank-logo.png" 
+          src="fish-tank-logo.png" 
           alt="calculate fish tank volume" 
           className="w-24 h-24 mb-4"
         />
