@@ -1,6 +1,12 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import RectangularTank from "./tank-shapes/RectangularTank";
 import CylindricalTank from "./tank-shapes/CylindricalTank";
 import BowfrontTank from "./tank-shapes/BowfrontTank";
@@ -16,6 +22,7 @@ const TankCalculator = () => {
   const [volume, setVolume] = useState(0);
   const [unit, setUnit] = useState<"gallons" | "liters">("gallons");
   const [dimensionUnit, setDimensionUnit] = useState<"inches" | "mm">("inches");
+  const [selectedShape, setSelectedShape] = useState("rectangular");
 
   const handleVolumeChange = (newVolume: number) => {
     setVolume(newVolume);
@@ -27,6 +34,35 @@ const TankCalculator = () => {
 
   const handleDimensionUnitChange = (newUnit: "inches" | "mm") => {
     setDimensionUnit(newUnit);
+  };
+
+  const renderSelectedTank = () => {
+    const props = {
+      onVolumeChange: handleVolumeChange,
+      unit,
+      dimensionUnit,
+    };
+
+    switch (selectedShape) {
+      case "rectangular":
+        return <RectangularTank {...props} />;
+      case "cylindrical":
+        return <CylindricalTank {...props} />;
+      case "bowfront":
+        return <BowfrontTank {...props} />;
+      case "corner":
+        return <CornerTank {...props} />;
+      case "l-shape":
+        return <LShapeTank {...props} />;
+      case "hexagonal":
+        return <HexagonalTank {...props} />;
+      case "pentagon":
+        return <PentagonTank {...props} />;
+      case "octagon":
+        return <OctagonTank {...props} />;
+      default:
+        return <RectangularTank {...props} />;
+    }
   };
 
   return (
@@ -42,59 +78,40 @@ const TankCalculator = () => {
         </h1>
       </div>
       
-      <Card className="w-full max-w-4xl mx-auto">
-        <Tabs defaultValue="rectangular" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-            <TabsTrigger value="rectangular">Rectangular</TabsTrigger>
-            <TabsTrigger value="cylindrical">Cylindrical</TabsTrigger>
-            <TabsTrigger value="bowfront">Bowfront</TabsTrigger>
-            <TabsTrigger value="corner">Corner</TabsTrigger>
-            <TabsTrigger value="l-shape">L-Shape</TabsTrigger>
-            <TabsTrigger value="hexagonal">Hexagonal</TabsTrigger>
-            <TabsTrigger value="pentagon">Pentagon</TabsTrigger>
-            <TabsTrigger value="octagon">Octagon</TabsTrigger>
-          </TabsList>
+      <Card className="w-full max-w-4xl mx-auto p-6">
+        <div className="mb-6">
+          <label htmlFor="tank-shape" className="block text-sm font-medium mb-2">
+            Select Tank Shape
+          </label>
+          <Select
+            value={selectedShape}
+            onValueChange={setSelectedShape}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Select a tank shape" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="rectangular">Rectangular</SelectItem>
+              <SelectItem value="cylindrical">Cylindrical</SelectItem>
+              <SelectItem value="bowfront">Bowfront</SelectItem>
+              <SelectItem value="corner">Corner</SelectItem>
+              <SelectItem value="l-shape">L-Shape</SelectItem>
+              <SelectItem value="hexagonal">Hexagonal</SelectItem>
+              <SelectItem value="pentagon">Pentagon</SelectItem>
+              <SelectItem value="octagon">Octagon</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
 
-          <VolumeDisplay 
-            volume={volume} 
-            unit={unit} 
-            dimensionUnit={dimensionUnit}
-            onUnitChange={handleUnitChange}
-            onDimensionUnitChange={handleDimensionUnitChange}
-          />
+        <VolumeDisplay 
+          volume={volume} 
+          unit={unit} 
+          dimensionUnit={dimensionUnit}
+          onUnitChange={handleUnitChange}
+          onDimensionUnitChange={handleDimensionUnitChange}
+        />
 
-          <TabsContent value="rectangular">
-            <RectangularTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="cylindrical">
-            <CylindricalTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="bowfront">
-            <BowfrontTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="corner">
-            <CornerTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="l-shape">
-            <LShapeTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="hexagonal">
-            <HexagonalTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="pentagon">
-            <PentagonTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-
-          <TabsContent value="octagon">
-            <OctagonTank onVolumeChange={handleVolumeChange} unit={unit} dimensionUnit={dimensionUnit} />
-          </TabsContent>
-        </Tabs>
+        {renderSelectedTank()}
       </Card>
       <PrintButton />
     </div>
