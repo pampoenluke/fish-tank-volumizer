@@ -15,6 +15,8 @@ import LShapeTank from "./tank-shapes/LShapeTank";
 import HexagonalTank from "./tank-shapes/HexagonalTank";
 import PentagonTank from "./tank-shapes/PentagonTank";
 import OctagonTank from "./tank-shapes/OctagonTank";
+import HalfCylindricalTank from "./tank-shapes/HalfCylindricalTank";
+import FishBowlTank from "./tank-shapes/FishBowlTank";
 import VolumeDisplay from "./VolumeDisplay";
 import PrintButton from "./PrintButton";
 
@@ -47,9 +49,13 @@ const TankCalculator = () => {
       case "rectangular":
         return <RectangularTank {...props} />;
       case "square":
-        return <RectangularTank {...props} isSquare={true} />;
+        return <RectangularTank {...props} isSquare />;
       case "cylindrical":
         return <CylindricalTank {...props} />;
+      case "half-cylindrical":
+        return <HalfCylindricalTank {...props} />;
+      case "fish-bowl":
+        return <FishBowlTank {...props} />;
       case "bowfront":
         return <BowfrontTank {...props} />;
       case "corner":
@@ -96,6 +102,8 @@ const TankCalculator = () => {
               <SelectItem value="rectangular">Rectangular</SelectItem>
               <SelectItem value="square">Square</SelectItem>
               <SelectItem value="cylindrical">Cylindrical</SelectItem>
+              <SelectItem value="half-cylindrical">Half Cylindrical</SelectItem>
+              <SelectItem value="fish-bowl">Fish Bowl</SelectItem>
               <SelectItem value="bowfront">Bowfront</SelectItem>
               <SelectItem value="corner">Corner</SelectItem>
               <SelectItem value="l-shape">L-Shape</SelectItem>
