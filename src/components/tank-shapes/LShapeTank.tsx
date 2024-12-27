@@ -1,30 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 
 interface LShapeTankProps {
-  dimensions: {
-    lshapeLongSide: string;
-    lshapeShortSide: string;
-    height: string;
-  };
-  unit: string;
-  onDimensionChange: (dimension: string, value: string) => void;
+  onVolumeChange: (volume: number) => void;
+  unit: "gallons" | "liters";
 }
 
 const LShapeTank: React.FC<LShapeTankProps> = ({
-  dimensions,
-  unit,
-  onDimensionChange,
+  onVolumeChange,
+  unit
 }) => {
+  const [dimensions, setDimensions] = useState({
+    lshapeLongSide: '',
+    lshapeShortSide: '',
+    height: ''
+  });
+
+  useEffect(() => {
+    const longSide = parseFloat(dimensions.lshapeLongSide);
+    const shortSide = parseFloat(dimensions.lshapeShortSide);
+    const height = parseFloat(dimensions.height);
+
+    if (longSide && shortSide && height) {
+      const volume = (longSide * shortSide * height);
+      
+      const volumeInSelectedUnit = unit === 'gallons' 
+        ? volume * 0.004329 // Convert cubic inches to gallons
+        : volume * 0.016387; // Convert cubic inches to liters
+      
+      onVolumeChange(volumeInSelectedUnit);
+    }
+  }, [dimensions, unit, onVolumeChange]);
+
   return (
-    <>
+    <div className="grid gap-4 p-4">
       <div>
         <Label>Long Side ({unit})</Label>
         <Input
           type="number"
           value={dimensions.lshapeLongSide}
-          onChange={(e) => onDimensionChange('lshapeLongSide', e.target.value)}
+          onChange={(e) => setDimensions(prev => ({ ...prev, lshapeLongSide: e.target.value }))}
           placeholder={`Enter long side in ${unit}`}
         />
       </div>
@@ -33,7 +49,7 @@ const LShapeTank: React.FC<LShapeTankProps> = ({
         <Input
           type="number"
           value={dimensions.lshapeShortSide}
-          onChange={(e) => onDimensionChange('lshapeShortSide', e.target.value)}
+          onChange={(e) => setDimensions(prev => ({ ...prev, lshapeShortSide: e.target.value }))}
           placeholder={`Enter short side in ${unit}`}
         />
       </div>
@@ -42,11 +58,11 @@ const LShapeTank: React.FC<LShapeTankProps> = ({
         <Input
           type="number"
           value={dimensions.height}
-          onChange={(e) => onDimensionChange('height', e.target.value)}
+          onChange={(e) => setDimensions(prev => ({ ...prev, height: e.target.value }))}
           placeholder={`Enter height in ${unit}`}
         />
       </div>
-    </>
+    </div>
   );
 };
 
