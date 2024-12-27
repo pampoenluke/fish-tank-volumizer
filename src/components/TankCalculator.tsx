@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calculator, Square, Circle, Hexagon } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 import RectangularTank from './tank-shapes/RectangularTank';
 import CylindricalTank from './tank-shapes/CylindricalTank';
 import BowfrontTank from './tank-shapes/BowfrontTank';
@@ -18,6 +18,8 @@ import CornerTank from './tank-shapes/CornerTank';
 import LShapeTank from './tank-shapes/LShapeTank';
 import PentagonTank from './tank-shapes/PentagonTank';
 import OctagonTank from './tank-shapes/OctagonTank';
+import PrintButton from './PrintButton';
+import VolumeDisplay from './VolumeDisplay';
 import { calculateVolume } from '@/utils/volumeCalculations';
 
 type TankShape = 'rectangular' | 'square' | 'cylindrical' | 'circle' | 'bowfront' | 'hexagonal' | 'corner' | 'lshape' | 'pentagon' | 'octagon';
@@ -42,21 +44,6 @@ const TankCalculator = () => {
     setDimensions({ ...dimensions, [dimension]: value });
   };
 
-  const getShapeIcon = (shape: TankShape) => {
-    switch (shape) {
-      case 'square':
-        return <Square className="w-5 h-5" />;
-      case 'circle':
-      case 'cylindrical':
-        return <Circle className="w-5 h-5" />;
-      case 'hexagonal':
-        return <Hexagon className="w-5 h-5" />;
-      case 'rectangular':
-      default:
-        return <Square className="w-5 h-5 rotate-90" />;
-    }
-  };
-
   const volume = calculateVolume(shape, dimensions, unit, dimensions.glassThickness);
 
   return (
@@ -73,72 +60,19 @@ const TankCalculator = () => {
               <Label>Tank Shape</Label>
               <Select value={shape} onValueChange={(value: TankShape) => setShape(value)}>
                 <SelectTrigger>
-                  <div className="flex items-center gap-2">
-                    {getShapeIcon(shape)}
-                    <SelectValue />
-                  </div>
+                  <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="rectangular">
-                    <div className="flex items-center gap-2">
-                      <Square className="w-5 h-5 rotate-90" />
-                      Rectangular
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="square">
-                    <div className="flex items-center gap-2">
-                      <Square className="w-5 h-5" />
-                      Square
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="cylindrical">
-                    <div className="flex items-center gap-2">
-                      <Circle className="w-5 h-5" />
-                      Cylindrical
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="circle">
-                    <div className="flex items-center gap-2">
-                      <Circle className="w-5 h-5" />
-                      Circle
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="bowfront">
-                    <div className="flex items-center gap-2">
-                      <Square className="w-5 h-5 rotate-90" />
-                      Bow Front
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="hexagonal">
-                    <div className="flex items-center gap-2">
-                      <Hexagon className="w-5 h-5" />
-                      Hexagonal
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="corner">
-                    <div className="flex items-center gap-2">
-                      <Square className="w-5 h-5 rotate-45" />
-                      Corner
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="lshape">
-                    <div className="flex items-center gap-2">
-                      <Square className="w-5 h-5 rotate-90" />
-                      L-Shape
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="pentagon">
-                    <div className="flex items-center gap-2">
-                      <Hexagon className="w-5 h-5" />
-                      Pentagon
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="octagon">
-                    <div className="flex items-center gap-2">
-                      <Hexagon className="w-5 h-5" />
-                      Octagon
-                    </div>
-                  </SelectItem>
+                  <SelectItem value="rectangular">Rectangular</SelectItem>
+                  <SelectItem value="square">Square</SelectItem>
+                  <SelectItem value="cylindrical">Cylindrical</SelectItem>
+                  <SelectItem value="circle">Circle</SelectItem>
+                  <SelectItem value="bowfront">Bow Front</SelectItem>
+                  <SelectItem value="hexagonal">Hexagonal</SelectItem>
+                  <SelectItem value="corner">Corner</SelectItem>
+                  <SelectItem value="lshape">L-Shape</SelectItem>
+                  <SelectItem value="pentagon">Pentagon</SelectItem>
+                  <SelectItem value="octagon">Octagon</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -234,19 +168,8 @@ const TankCalculator = () => {
             </div>
           </div>
 
-          <div className="mt-6 p-4 bg-aqua-50 rounded-lg">
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">Tank Volume</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-600">Gallons</p>
-                <p className="text-2xl font-bold text-aqua-500">{volume.gallons}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Liters</p>
-                <p className="text-2xl font-bold text-aqua-500">{volume.liters}</p>
-              </div>
-            </div>
-          </div>
+          <VolumeDisplay gallons={volume.gallons} liters={volume.liters} />
+          <PrintButton />
         </div>
       </Card>
     </div>
