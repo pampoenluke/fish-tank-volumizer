@@ -1,6 +1,5 @@
-export const convertToInches = (value: number, unit: string): number => {
-  return unit === 'mm' ? value / 25.4 : value;
-};
+const CUBIC_INCHES_TO_GALLONS = 0.004329;
+const CUBIC_MM_TO_LITERS = 0.000001;
 
 export const calculateVolume = (
   shape: string,
@@ -9,52 +8,68 @@ export const calculateVolume = (
   glassThickness: string
 ) => {
   let volume = 0;
-  const thickness = convertToInches(parseFloat(glassThickness) || 0, unit);
+  const thickness = parseFloat(glassThickness) || 0;
+
+  // Convert all dimensions to numbers and adjust for glass thickness
+  const length = parseFloat(dimensions.length) - 2 * thickness;
+  const width = parseFloat(dimensions.width) - 2 * thickness;
+  const height = parseFloat(dimensions.height) - thickness;
+  const diameter = parseFloat(dimensions.diameter) - 2 * thickness;
+  const bowDepth = parseFloat(dimensions.bowDepth);
+  const cornerAngle = parseFloat(dimensions.cornerAngle);
+  const lshapeLongSide = parseFloat(dimensions.lshapeLongSide) - 2 * thickness;
+  const lshapeShortSide = parseFloat(dimensions.lshapeShortSide) - 2 * thickness;
 
   switch (shape) {
     case 'rectangular':
+      volume = length * width * height;
+      break;
     case 'square':
-      const l = convertToInches(parseFloat(dimensions.length), unit) - 2 * thickness;
-      const w = convertToInches(parseFloat(dimensions.width), unit) - 2 * thickness;
-      const h = convertToInches(parseFloat(dimensions.height), unit) - thickness;
-      volume = (l * w * h) / 231;
+      volume = width * width * height;
       break;
     case 'cylindrical':
     case 'circle':
-      const r = (convertToInches(parseFloat(dimensions.diameter), unit) - 2 * thickness) / 2;
-      const height = convertToInches(parseFloat(dimensions.height), unit) - thickness;
-      volume = (Math.PI * r * r * height) / 231;
+      volume = Math.PI * Math.pow(diameter / 2, 2) * height;
       break;
     case 'bowfront':
-      const length = convertToInches(parseFloat(dimensions.length), unit) - 2 * thickness;
-      const width = convertToInches(parseFloat(dimensions.width), unit) - 2 * thickness;
-      const bowDepth = convertToInches(parseFloat(dimensions.bowDepth) || 0, unit);
-      const tankHeight = convertToInches(parseFloat(dimensions.height), unit) - thickness;
-      const avgWidth = width + bowDepth / 2;
-      volume = (length * avgWidth * tankHeight) / 231;
+      // Approximate bowfront volume using rectangular + partial cylinder
+      const baseVolume = length * width * height;
+      const bowVolume = (Math.PI * bowDepth * width * height) / 4;
+      volume = baseVolume + bowVolume;
       break;
     case 'hexagonal':
-      const side = convertToInches(parseFloat(dimensions.width), unit) - 2 * thickness;
-      const hexHeight = convertToInches(parseFloat(dimensions.height), unit) - thickness;
-      volume = ((3 * Math.sqrt(3) * Math.pow(side, 2) * hexHeight) / 2) / 231;
+      // Regular hexagon
+      volume = (3 * Math.sqrt(3) * Math.pow(width, 2) * height) / 2;
       break;
     case 'corner':
-      const cornerSide = convertToInches(parseFloat(dimensions.width), unit) - 2 * thickness;
-      const cornerHeight = convertToInches(parseFloat(dimensions.height), unit) - thickness;
-      const angle = parseFloat(dimensions.cornerAngle);
-      const radians = (angle * Math.PI) / 180;
-      volume = (cornerSide * cornerSide * cornerHeight * Math.tan(radians)) / 231;
+      // Corner tank using angle
+      const radians = (cornerAngle * Math.PI) / 180;
+      volume = (width * width * height) / (2 * Math.tan(radians / 2));
       break;
     case 'lshape':
-      const longSide = convertToInches(parseFloat(dimensions.lshapeLongSide), unit) - 2 * thickness;
-      const shortSide = convertToInches(parseFloat(dimensions.lshapeShortSide), unit) - 2 * thickness;
-      const lHeight = convertToInches(parseFloat(dimensions.height), unit) - thickness;
-      volume = (longSide * shortSide * lHeight) / 231;
+      // L-shaped tank
+      volume = (lshapeLongSide * width + lshapeShortSide * (width - thickness)) * height;
       break;
+    case 'pentagon':
+      // Regular pentagon
+      const pentagonArea = (5 * Math.pow(width, 2) * Math.tan(Math.PI / 5)) / 4;
+      volume = pentagonArea * height;
+      break;
+    case 'octagon':
+      // Regular octagon
+      const octagonArea = 2 * Math.pow(width, 2) * (1 + Math.sqrt(2));
+      volume = octagonArea * height;
+      break;
+    default:
+      volume = 0;
   }
 
+  // Convert to gallons/liters based on unit
+  const gallons = unit === 'inches' ? volume * CUBIC_INCHES_TO_GALLONS : volume * CUBIC_MM_TO_LITERS * 0.264172;
+  const liters = unit === 'inches' ? volume * CUBIC_INCHES_TO_GALLONS * 3.78541 : volume * CUBIC_MM_TO_LITERS;
+
   return {
-    gallons: Math.round(volume * 100) / 100,
-    liters: Math.round(volume * 3.78541 * 100) / 100,
+    gallons: isNaN(gallons) ? '0' : gallons.toFixed(2),
+    liters: isNaN(liters) ? '0' : liters.toFixed(2),
   };
 };
